@@ -1,13 +1,44 @@
-import { StyleSheet, Text, View, SafeAreaView, Image, KeyboardAvoidingView, TextInput, Pressable } from 'react-native'
+import { StyleSheet, Text, View, SafeAreaView, Image, KeyboardAvoidingView, TextInput, Pressable, Alert } from 'react-native'
 import React, { useState } from "react";
 import { MaterialIcons, AntDesign, Ionicons } from '@expo/vector-icons';
 import { useNavigation } from "@react-navigation/native";
 
+import axios from 'axios';
+
 const RegisterScreen = () => {
   const [email, setEmail] = useState("");
-  const [password, setPassword] =useState("");
-const [name,setName]=useState("")
+  const [password, setPassword] = useState("");
+  const [name, setName] = useState("")
   const navigation = useNavigation()
+
+  const handleRegister = () => {
+    const user = {
+      name: name,
+      email: email,
+      password: password,
+    };
+
+    // send a POST  request to the backend API to register the user
+    axios
+      .post("http://10.0.2.2:8000/register", user)
+      .then((response) => {
+        console.log(response.data);
+        Alert.alert(
+          "Registration successful",
+          "You have been registered Successfully"
+        );
+        setName("");
+        setEmail("");
+        setPassword("");
+      })
+      .catch((error) => {
+        Alert.alert(
+          "Registration Error",
+          "An error occurred while registering"
+        );
+        console.log("registration failed", error);
+      });
+  };
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: "white", alignItems: "center" }}>
       <View>
@@ -38,7 +69,7 @@ const [name,setName]=useState("")
 
           }}>
             <Ionicons name="person-sharp" size={24} color="gray"
-              style={{ marginLeft: 8 }}/>
+              style={{ marginLeft: 8 }} />
             <TextInput
               value={name}
               onChangeText={(text) => setName(text)}
@@ -94,6 +125,7 @@ const [name,setName]=useState("")
 
         <View style={{ marginTop: 80 }} />
         <Pressable
+          onPress={handleRegister}
           style={{
             width: 200,
             backgroundColor: "#FEBE10",
@@ -106,8 +138,8 @@ const [name,setName]=useState("")
             color: "white",
             fontSize: 16,
             fontWeight: "bold",
-            
-            }}>Register</Text>
+
+          }}>Register</Text>
 
         </Pressable>
         <Pressable
