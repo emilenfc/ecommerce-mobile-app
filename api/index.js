@@ -40,7 +40,7 @@ console.log("verifying email")
         service: "gmail",
         auth: {
             user: "iyaemile4@gmail.com",
-            pass: ""// to be get from  .env
+            pass: "xssi lnkb dzcy ixot"// to be get from  .env
         }
     });
     //compose the email message
@@ -121,5 +121,38 @@ app.get("/verify/:token", async (req, res) => {
     } catch (error) {
         console.log("error while verifying user", error);
         res.status(500).json({ message: "verification failed" });
+    }
+})
+
+const generateSecretkey = () => {
+    const secretkey = crypto.randomBytes(31).toString("hex");
+    return secretkey;
+}
+const secretKey = generateSecretkey();
+// endpoint to login the user
+app.post('/login', async (req, res) => {
+    try {
+        const { email, password } = req.body;
+        //check if user exist
+        const user = await User.findOne({ email });
+        if (!user) {
+            return res.status(401).json({ message: "Invalid email" });
+        }
+        //check password
+        
+        if (user.password !== password) {
+            return res.status(401).json({ message: "Invalid password" });
+        }
+        // //check if user is verified
+        // if (!user.verified) {
+        //     return res.status(401).json({ message: "Email not verified" });
+        // }
+        
+        //generate JWT token
+        const token = jwt.sign({ userId: user._id }, secretKey);
+        res.status(200).json({ token });
+    } catch (error) {
+        console.log("error while login", error);
+        res.status(500).json({ message: "login failed" });
     }
 })

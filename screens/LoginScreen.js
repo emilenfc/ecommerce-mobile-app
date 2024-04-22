@@ -1,12 +1,38 @@
-import { StyleSheet, Text, View, SafeAreaView, Image, KeyboardAvoidingView, TextInput, Pressable } from "react-native";
+import { StyleSheet, Text, View, SafeAreaView, Image, KeyboardAvoidingView, TextInput, Pressable, Alert } from "react-native";
 import React, { useState } from "react";
 import { MaterialIcons, AntDesign } from '@expo/vector-icons';
 import { useNavigation } from "@react-navigation/native";
 
+import axios from 'axios';
+import AsyncStorage from "@react-native-async-storage/async-storage";
+
 const LoginScreen = () => {
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
-    const navigation=useNavigation()
+    const navigation = useNavigation()
+    
+    const handleLogin = () => {
+        const user = {
+            email: email,
+            password: password
+        };
+        axios
+            .post("http://10.0.2.2:8000/login", user)
+            .then((response) => {
+                Alert.alert("Login successful");
+                console.log(response.data);
+                const token = response.data.token
+                AsyncStorage.setItem("authToken", token)
+                
+                 setEmail("");
+                 setPassword("");
+                navigation.navigate("Home")
+            })
+            .catch((error) => {
+                Alert.alert("Login failed", "Try again");
+                console.log("login failed", error);
+            });
+    };
     return (
         <SafeAreaView style={{ flex: 1, backgroundColor: "white", alignItems: "center" }}>
             <View>
@@ -75,6 +101,7 @@ const LoginScreen = () => {
 
                 <View style={{ marginTop: 80 }} />
                 <Pressable
+                    onPress={handleLogin}
                     style={{
                         width:200,
                         backgroundColor: "#FEBE10",
