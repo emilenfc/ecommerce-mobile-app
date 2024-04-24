@@ -1,5 +1,5 @@
 import { StyleSheet, Text, View, SafeAreaView, Image, KeyboardAvoidingView, TextInput, Pressable, Alert } from "react-native";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { MaterialIcons, AntDesign } from '@expo/vector-icons';
 import { useNavigation } from "@react-navigation/native";
 
@@ -10,6 +10,22 @@ const LoginScreen = () => {
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
     const navigation = useNavigation()
+
+    useEffect(() => {
+        const checkLoginStatus = async () => {
+            try {
+                const token = await AsyncStorage.getItem("authToken");
+                if (token) {
+                    navigation.replace("Main")
+                }
+            
+            } catch (error) {
+                console.log("error message", error)
+            }
+        };
+
+        checkLoginStatus();
+    },[])
     
     const handleLogin = () => {
         const user = {
@@ -26,7 +42,7 @@ const LoginScreen = () => {
                 
                  setEmail("");
                  setPassword("");
-                navigation.navigate("Home")
+                navigation.replace("Main")
             })
             .catch((error) => {
                 Alert.alert("Login failed", "Try again");
