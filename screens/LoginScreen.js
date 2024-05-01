@@ -53,10 +53,8 @@ const LoginScreen = () => {
         <SafeAreaView style={{ flex: 1, backgroundColor: "white", alignItems: "center" }}>
             <View>
                 <Image
-                    style={{ width: 150, height: 100 }}
-                    source={{
-                        url: "https://assets.stickpng.com/thumbs/6160562276000b00045a7d97.png"
-                    }}>
+                    style={{ width: 200, height: 50}}
+                    source={require("../assets/ekorana.png")}>
                 </Image>
 
             </View>
